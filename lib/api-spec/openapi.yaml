@@ -1,0 +1,516 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: career
+    description: Stateless AI-powered career exploration
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /career/recommendations:
+    post:
+      operationId: generateCareerRecommendations
+      tags: [career]
+      summary: Generate explainable career path recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerRecommendationInput"
+      responses:
+        "200":
+          description: Career paths scored against the user's priorities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerRecommendationResult"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/experiment:
+    post:
+      operationId: generateCareerExperiment
+      tags: [career]
+      summary: Create a practical career micro-experiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerExperimentInput"
+      responses:
+        "200":
+          description: A time-bounded experiment and reflection prompts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerExperiment"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/simulation:
+    post:
+      operationId: simulateCareerFutures
+      tags: [career]
+      summary: Compare three possible career futures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerSimulationInput"
+      responses:
+        "200":
+          description: Branching career scenarios with assumptions and risks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerSimulation"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/council:
+    post:
+      operationId: consultCareerCouncil
+      tags: [career]
+      summary: Get four perspectives on a career decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerCouncilInput"
+      responses:
+        "200":
+          description: A balanced discussion from four distinct perspectives
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerCouncil"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/pulse:
+    post:
+      operationId: reflectOnWeeklyPulse
+      tags: [career]
+      summary: Reflect on progress and suggest a practical adjustment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerPulseInput"
+      responses:
+        "200":
+          description: A supportive reflection and next step
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerPulse"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/chat:
+    post:
+      operationId: askCareerCopilot
+      tags: [career]
+      summary: Ask the career copilot a profile-aware question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerChatInput"
+      responses:
+        "200":
+          description: A grounded answer with optional suggested actions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerChatReply"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+  /career/market-signals:
+    post:
+      operationId: researchCareerMarketSignals
+      tags: [career]
+      summary: Research current market signals with cited web sources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerMarketSignalsInput"
+      responses:
+        "200":
+          description: Market signals, caveats, and available source citations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerMarketSignals"
+        "400":
+          description: Invalid request
+        "429":
+          description: Request limit reached
+        "502":
+          description: The AI could not produce a valid response
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    CareerProfile:
+      type: object
+      properties:
+        stage:
+          type: string
+          enum: [class-10, class-12, college, early-career, exploring]
+        interests:
+          type: array
+          items: { type: string, maxLength: 80 }
+          maxItems: 12
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string, maxLength: 80 }
+              level: { type: integer, minimum: 1, maximum: 5 }
+              evidence: { type: string, maxLength: 300 }
+            required: [name, level, evidence]
+          maxItems: 16
+        values:
+          type: array
+          items: { type: string, maxLength: 80 }
+          maxItems: 8
+        constraints:
+          type: object
+          properties:
+            budget: { type: string, enum: [limited, moderate, flexible] }
+            location: { type: string, maxLength: 100 }
+            timeHoursPerWeek: { type: integer, minimum: 0, maximum: 80 }
+            educationLevel: { type: string, maxLength: 100 }
+            languages:
+              type: array
+              items: { type: string, maxLength: 60 }
+              maxItems: 8
+            riskTolerance: { type: string, enum: [low, medium, high] }
+          additionalProperties: false
+        workStyle:
+          type: array
+          items: { type: string, maxLength: 80 }
+          maxItems: 8
+      additionalProperties: false
+    CareerPriorities:
+      type: object
+      properties:
+        income: { type: integer, minimum: 0, maximum: 100 }
+        stability: { type: integer, minimum: 0, maximum: 100 }
+        creativity: { type: integer, minimum: 0, maximum: 100 }
+        impact: { type: integer, minimum: 0, maximum: 100 }
+        freedom: { type: integer, minimum: 0, maximum: 100 }
+      required: [income, stability, creativity, impact, freedom]
+      additionalProperties: false
+    CareerRecommendationInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        priorities: { $ref: "#/components/schemas/CareerPriorities" }
+        locale: { type: string, maxLength: 24 }
+      required: [profile, priorities, locale]
+      additionalProperties: false
+    CareerScoreBreakdown:
+      type: object
+      properties:
+        interest: { type: integer, minimum: 0, maximum: 100 }
+        skills: { type: integer, minimum: 0, maximum: 100 }
+        values: { type: integer, minimum: 0, maximum: 100 }
+        feasibility: { type: integer, minimum: 0, maximum: 100 }
+        marketDemand: { type: integer, minimum: 0, maximum: 100 }
+      required: [interest, skills, values, feasibility, marketDemand]
+      additionalProperties: false
+    CareerPath:
+      type: object
+      properties:
+        id: { type: string, maxLength: 80 }
+        title: { type: string, maxLength: 100 }
+        category: { type: string, maxLength: 60 }
+        summary: { type: string, maxLength: 500 }
+        confidence: { type: integer, minimum: 0, maximum: 100 }
+        fitScore: { type: integer, minimum: 0, maximum: 100 }
+        scoreBreakdown: { $ref: "#/components/schemas/CareerScoreBreakdown" }
+        reasons:
+          type: array
+          items: { type: string, maxLength: 240 }
+          maxItems: 5
+        risks:
+          type: array
+          items: { type: string, maxLength: 240 }
+          maxItems: 4
+        whatWouldChangeMyMind:
+          type: array
+          items: { type: string, maxLength: 240 }
+          maxItems: 3
+        wildcard: { type: boolean }
+      required: [id, title, category, summary, confidence, fitScore, scoreBreakdown, reasons, risks, whatWouldChangeMyMind, wildcard]
+      additionalProperties: false
+    CareerRecommendationResult:
+      type: object
+      properties:
+        summary: { type: string, maxLength: 500 }
+        clarityScore: { type: integer, minimum: 0, maximum: 100 }
+        paths:
+          type: array
+          items: { $ref: "#/components/schemas/CareerPath" }
+          minItems: 4
+          maxItems: 4
+      required: [summary, clarityScore, paths]
+      additionalProperties: false
+    CareerExperimentInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        careerTitle: { type: string, minLength: 1, maxLength: 100 }
+        durationDays: { type: integer, minimum: 1, maximum: 7 }
+        locale: { type: string, maxLength: 24 }
+      required: [profile, careerTitle, durationDays, locale]
+      additionalProperties: false
+    CareerExperimentStep:
+      type: object
+      properties:
+        day: { type: integer, minimum: 1, maximum: 7 }
+        title: { type: string, maxLength: 100 }
+        description: { type: string, maxLength: 400 }
+        proofOfWork: { type: string, maxLength: 200 }
+      required: [day, title, description, proofOfWork]
+      additionalProperties: false
+    CareerExperiment:
+      type: object
+      properties:
+        title: { type: string, maxLength: 120 }
+        objective: { type: string, maxLength: 400 }
+        durationDays: { type: integer, minimum: 1, maximum: 7 }
+        timeEstimate: { type: string, maxLength: 60 }
+        tools:
+          type: array
+          items: { type: string, maxLength: 100 }
+          maxItems: 6
+        steps:
+          type: array
+          items: { $ref: "#/components/schemas/CareerExperimentStep" }
+          minItems: 1
+          maxItems: 7
+        reflectionPrompts:
+          type: array
+          items: { type: string, maxLength: 240 }
+          minItems: 2
+          maxItems: 4
+        whatToNotice:
+          type: array
+          items: { type: string, maxLength: 240 }
+          minItems: 2
+          maxItems: 4
+      required: [title, objective, durationDays, timeEstimate, tools, steps, reflectionPrompts, whatToNotice]
+      additionalProperties: false
+    CareerSimulationInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        careerTitle: { type: string, minLength: 1, maxLength: 100 }
+        locale: { type: string, maxLength: 24 }
+      required: [profile, careerTitle, locale]
+      additionalProperties: false
+    CareerTimelineMilestone:
+      type: object
+      properties:
+        year: { type: integer, enum: [1, 3, 5] }
+        headline: { type: string, maxLength: 140 }
+        description: { type: string, maxLength: 320 }
+        proofOfWork: { type: string, maxLength: 180 }
+      required: [year, headline, description, proofOfWork]
+      additionalProperties: false
+    CareerScenario:
+      type: object
+      properties:
+        name: { type: string, maxLength: 80 }
+        tone: { type: string, enum: [steady, stretch, pivot] }
+        description: { type: string, maxLength: 300 }
+        milestones:
+          type: array
+          items: { $ref: "#/components/schemas/CareerTimelineMilestone" }
+          minItems: 3
+          maxItems: 3
+        assumptions:
+          type: array
+          items: { type: string, maxLength: 200 }
+          maxItems: 4
+        risks:
+          type: array
+          items: { type: string, maxLength: 200 }
+          maxItems: 4
+      required: [name, tone, description, milestones, assumptions, risks]
+      additionalProperties: false
+    CareerSimulation:
+      type: object
+      properties:
+        careerTitle: { type: string, maxLength: 100 }
+        caveat: { type: string, maxLength: 300 }
+        scenarios:
+          type: array
+          items: { $ref: "#/components/schemas/CareerScenario" }
+          minItems: 3
+          maxItems: 3
+      required: [careerTitle, caveat, scenarios]
+      additionalProperties: false
+    CareerCouncilInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        careerTitle: { type: string, minLength: 1, maxLength: 100 }
+        concern: { type: string, maxLength: 500 }
+        locale: { type: string, maxLength: 24 }
+      required: [profile, careerTitle, locale]
+      additionalProperties: false
+    CareerCouncilVoice:
+      type: object
+      properties:
+        perspective: { type: string, enum: [realist, optimist, employer, family] }
+        headline: { type: string, maxLength: 100 }
+        view: { type: string, maxLength: 500 }
+        question: { type: string, maxLength: 200 }
+      required: [perspective, headline, view, question]
+      additionalProperties: false
+    CareerCouncil:
+      type: object
+      properties:
+        voices:
+          type: array
+          items: { $ref: "#/components/schemas/CareerCouncilVoice" }
+          minItems: 4
+          maxItems: 4
+        synthesis: { type: string, maxLength: 500 }
+        conversationStarter: { type: string, maxLength: 240 }
+      required: [voices, synthesis, conversationStarter]
+      additionalProperties: false
+    CareerPulseInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        mood: { type: integer, minimum: 1, maximum: 5 }
+        progress: { type: string, maxLength: 500 }
+        blocker: { type: string, maxLength: 500 }
+        locale: { type: string, maxLength: 24 }
+      required: [profile, mood, progress, blocker, locale]
+      additionalProperties: false
+    CareerPulse:
+      type: object
+      properties:
+        reflection: { type: string, maxLength: 400 }
+        adjustment: { type: string, maxLength: 400 }
+        nextStep: { type: string, maxLength: 240 }
+        question: { type: string, maxLength: 240 }
+      required: [reflection, adjustment, nextStep, question]
+      additionalProperties: false
+    CareerChatMessage:
+      type: object
+      properties:
+        role: { type: string, enum: [user, assistant] }
+        content: { type: string, minLength: 1, maxLength: 2000 }
+      required: [role, content]
+      additionalProperties: false
+    CareerChatInput:
+      type: object
+      properties:
+        profile: { $ref: "#/components/schemas/CareerProfile" }
+        messages:
+          type: array
+          items: { $ref: "#/components/schemas/CareerChatMessage" }
+          minItems: 1
+          maxItems: 12
+        locale: { type: string, maxLength: 24 }
+      required: [profile, messages, locale]
+      additionalProperties: false
+    CareerChatReply:
+      type: object
+      properties:
+        answer: { type: string, maxLength: 2000 }
+        suggestedActions:
+          type: array
+          items: { type: string, maxLength: 120 }
+          maxItems: 3
+      required: [answer, suggestedActions]
+      additionalProperties: false
+    CareerMarketSignalsInput:
+      type: object
+      properties:
+        careerTitle: { type: string, minLength: 1, maxLength: 100 }
+        region: { type: string, minLength: 2, maxLength: 100 }
+        locale: { type: string, maxLength: 24 }
+      required: [careerTitle, region, locale]
+      additionalProperties: false
+    CareerMarketSignal:
+      type: object
+      properties:
+        claim: { type: string, maxLength: 300 }
+        implication: { type: string, maxLength: 240 }
+        sourceTitle: { type: string, maxLength: 160 }
+        sourceUrl: { type: string, maxLength: 1000 }
+      required: [claim, implication, sourceTitle, sourceUrl]
+      additionalProperties: false
+    CareerMarketSignals:
+      type: object
+      properties:
+        summary: { type: string, maxLength: 400 }
+        region: { type: string, maxLength: 100 }
+        signals:
+          type: array
+          items: { $ref: "#/components/schemas/CareerMarketSignal" }
+          maxItems: 5
+        caveat: { type: string, maxLength: 300 }
+      required: [summary, region, signals, caveat]
+      additionalProperties: false
+
