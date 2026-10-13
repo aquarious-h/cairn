@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter @workspace/career-copilot build",
+  "buildCommand": "pnpm --filter @workspace/api-server build && pnpm --filter @workspace/career-copilot build",
   "installCommand": "pnpm install --frozen-lockfile --filter \"@workspace/career-copilot...\" --filter \"@workspace/api-server...\"",
   "outputDirectory": "artifacts/career-copilot/dist/public",
   "rewrites": [
