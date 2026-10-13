@@ -7,3 +7,19 @@
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
+
+{
+  "services": {
+    "my_frontend": {
+      "root": "cairn/artifacts/career-copilot"
+    },
+    "my_backend": {
+      "root": "cairn/artifacts/api-server",
+      "entrypoint": "main:app"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "cairn/artifacts/api-server": { "service": "my_backend" } },
+    { "source": "/(.*)", "cairn/artifacts/career-copilot": { "service": "my_frontend" } }
+  ]
+}
